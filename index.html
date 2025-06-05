@@ -26,6 +26,7 @@
             background-color: #f5f5f5;
             color: var(--dark);
             line-height: 1.6;
+            overflow-x: hidden;
         }
         
         .container {
@@ -34,13 +35,14 @@
             margin: 0 auto;
             padding: 0 20px;
         }
+        
         header {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
             padding: 15px 0;
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
@@ -48,6 +50,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
         }
         
         .logo {
@@ -63,6 +66,16 @@
         .logo h1 {
             font-size: 1.8rem;
             font-weight: 700;
+            white-space: nowrap;
+        }
+        
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
         }
         
         nav ul {
@@ -166,7 +179,7 @@
             background-color: var(--secondary);
         }
         
-        .products {
+        .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 30px;
@@ -178,6 +191,9 @@
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
         
         .product-card:hover {
@@ -187,6 +203,27 @@
         .product-img {
             height: 200px;
             overflow: hidden;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .product-img::after {
+            content: '点击放大';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            text-align: center;
+            padding: 5px;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .product-img:hover::after {
+            opacity: 1;
         }
         
         .product-img img {
@@ -202,6 +239,9 @@
         
         .product-info {
             padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
         
         .product-info h3 {
@@ -213,6 +253,7 @@
         .product-info p {
             color: var(--gray);
             margin-bottom: 15px;
+            flex-grow: 1;
         }
         
         .product-price {
@@ -248,11 +289,17 @@
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            cursor: pointer;
         }
         
         .about-image img {
             width: 100%;
             display: block;
+            transition: transform 0.5s ease;
+        }
+        
+        .about-image:hover img {
+            transform: scale(1.05);
         }
         
         .features {
@@ -429,21 +476,49 @@
             color: #aaa;
         }
         
+        /* 新增的响应式设计 */
+        @media (max-width: 1024px) {
+            .hero h2 {
+                font-size: 3rem;
+            }
+            
+            .hero p {
+                font-size: 1.2rem;
+            }
+        }
+        
         @media (max-width: 768px) {
-            .header-container {
-                flex-direction: column;
+            .mobile-toggle {
+                display: block;
+            }
+            
+            nav {
+                width: 100%;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.5s ease;
+            }
+            
+            nav.active {
+                max-height: 500px;
             }
             
             nav ul {
-                margin-top: 15px;
+                flex-direction: column;
+                padding: 20px 0;
             }
             
             nav ul li {
-                margin: 0 10px;
+                margin: 10px 0;
+                text-align: center;
+            }
+            
+            .hero {
+                height: 70vh;
             }
             
             .hero h2 {
-                font-size: 2.5rem;
+                font-size: 2.2rem;
             }
             
             .hero p {
@@ -458,6 +533,113 @@
             .about-image {
                 order: -1;
             }
+            
+            .section {
+                padding: 60px 0;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logo h1 {
+                font-size: 1.5rem;
+            }
+            
+            .hero h2 {
+                font-size: 1.8rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .btn {
+                padding: 10px 25px;
+                font-size: 1rem;
+            }
+            
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+            
+            .feature i {
+                font-size: 2.5rem;
+            }
+            
+            .feature h3 {
+                font-size: 1.2rem;
+            }
+        }
+        
+        /* 添加动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        
+        /* 图片模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            overflow: auto;
+        }
+        
+        .modal-content {
+            display: block;
+            margin: 50px auto;
+            max-width: 90%;
+            max-height: 90%;
+            animation: zoom 0.3s;
+        }
+        
+        @keyframes zoom {
+            from {transform: scale(0.8);}
+            to {transform: scale(1);}
+        }
+        
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .modal-caption {
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 1.2rem;
+            max-width: 80%;
+            margin: 0 auto;
         }
     </style>
 </head>
@@ -468,7 +650,10 @@
                 <i class="fas fa-seedling"></i>
                 <h1>山东沂沭种业科技</h1>
             </div>
-            <nav>
+            <button class="mobile-toggle" id="mobileToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav id="mainNav">
                 <ul>
                     <li><a href="#home">首页</a></li>
                     <li><a href="#products">产品中心</a></li>
@@ -487,73 +672,53 @@
         </div>
     </section>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     <section class="section" id="products">
         <div class="container">
             <div class="section-title">
                 <h2>热销产品</h2>
             </div>
-            <div class="products">
-                <div class="product-card">
-                    <div class="product-img">
+            <div class="products-grid">
+                <div class="product-card fade-in">
+                    <div class="product-img" onclick="openModal('https://cdn4.winhlb.com/2025/06/05/6840786ac7200.jpg', '高产大花生种子')">
                         <img src="https://cdn4.winhlb.com/2025/06/05/6840786ac7200.jpg" alt="高产大花生种子">
                     </div>
                     <div class="product-info">
                         <h3>高产大花生种子</h3>
-                        <p>果仁饱满，出油率高，亩产可达****公斤</p>
-                        <div class="product-price">¥金额/公斤</div>
+                        <p>果仁饱满，出油率高，亩产可达600公斤以上，适应性强，适合各类土壤种植。</p>
+                        <div class="product-price">¥68.00/公斤</div>
                         <a href="#" class="btn">立即订购</a>
                     </div>
                 </div>
-                <div class="products">
-            
-                <div class="product-card">
-                    <div class="product-img">
+                <div class="product-card fade-in delay-1">
+                    <div class="product-img" onclick="openModal('https://cdn4.winhlb.com/2025/06/05/68407a5e0cb75.jpg', '红皮小花生种子')">
                         <img src="https://cdn4.winhlb.com/2025/06/05/68407a5e0cb75.jpg" alt="红皮小花生种子">
                     </div>
                     <div class="product-info">
                         <h3>红皮小花生种子</h3>
-                        <p>皮薄仁香，口感酥脆，适合鲜食和加工</p>
-                        <div class="product-price">¥金额/公斤</div>
+                        <p>皮薄仁香，口感酥脆，适合鲜食和加工，生长期短，抗逆性强。</p>
+                        <div class="product-price">¥72.00/公斤</div>
                         <a href="#" class="btn">立即订购</a>
                     </div>
                 </div>
-                 <div class="products">
-           
-                <div class="product-card">
-                    <div class="product-img">
+                <div class="product-card fade-in delay-2">
+                    <div class="product-img" onclick="openModal('https://cdn4.winhlb.com/2025/06/05/68407a80c7e77.jpg', '黑花生种子')">
                         <img src="https://cdn4.winhlb.com/2025/06/05/68407a80c7e77.jpg" alt="黑花生种子">
                     </div>
                     <div class="product-info">
                         <h3>黑花生种子</h3>
-                        <p>富含花青素，营养价值高，市场前景广阔</p>
-                        <div class="product-price">¥金额/公斤</div>
+                        <p>富含花青素，营养价值高，市场前景广阔，产量稳定，管理简单。</p>
+                        <div class="product-price">¥85.00/公斤</div>
                         <a href="#" class="btn">立即订购</a>
                     </div>
                 </div>
-                      <div class="products">
-      
-                <div class="product-card">
-                    <div class="product-img">
+                <div class="product-card fade-in delay-3">
+                    <div class="product-img" onclick="openModal('https://cdn4.winhlb.com/2025/06/05/68407aa51f8a3.jpg', '抗病花生种子')">
                         <img src="https://cdn4.winhlb.com/2025/06/05/68407aa51f8a3.jpg" alt="抗病花生种子">
                     </div>
                     <div class="product-info">
                         <h3>抗病花生种子</h3>
-                        <p>抗青枯病、叶斑病，适合重茬种植</p>
-                        <div class="product-price">¥金额/公斤</div>
+                        <p>抗青枯病、叶斑病，适合重茬种植，减少农药使用，降低种植成本。</p>
+                        <div class="product-price">¥75.00/公斤</div>
                         <a href="#" class="btn">立即订购</a>
                     </div>
                 </div>
@@ -569,36 +734,36 @@
             <div class="about-content">
                 <div class="about-text">
                     <h3>专业花生种子供应商</h3>
-                    <p>公司介绍**********************</p>
-                    <p>公司权威介绍*****************</p>
+                    <p>山东沂沭种业科技有限公司成立于2010年，是山东省农业产业化重点龙头企业。公司专注于花生种子的研发、培育、生产和销售，拥有2000亩标准化花生良种繁育基地。</p>
+                    <p>公司通过ISO9001质量管理体系认证，拥有多项花生新品种专利，产品远销全国20多个省市自治区。我们与山东省农业科学院、中国农业大学等科研机构保持长期合作关系，确保种子的优良品质。</p>
                     <p>我们秉承"质量第一、诚信经营"的理念，为种植户提供从选种、种植到销售的全过程技术指导服务，助力农民增产增收。</p>
                     <a href="#contact" class="btn">联系我们</a>
                 </div>
-                <div class="about-image">
+                <div class="about-image" onclick="openModal('https://cdn4.winhlb.com/2025/06/05/68407b05d0b1f.jpg', '花生种植基地')">
                     <img src="https://cdn4.winhlb.com/2025/06/05/68407b05d0b1f.jpg" alt="花生种植基地">
                 </div>
             </div>
             
             <div class="features">
-                <div class="feature">
+                <div class="feature fade-in">
                     <i class="fas fa-award"></i>
                     <h3>品质保证</h3>
                     <p>所有种子均经过严格筛选和检测，纯度≥98%，发芽率≥95%</p>
                 </div>
                 
-                <div class="feature">
+                <div class="feature fade-in delay-1">
                     <i class="fas fa-truck"></i>
                     <h3>快速配送</h3>
                     <p>全国物流网络，100公斤以上免费送货，保证及时送达</p>
                 </div>
                 
-                <div class="feature">
+                <div class="feature fade-in delay-2">
                     <i class="fas fa-headset"></i>
                     <h3>专业指导</h3>
                     <p>提供全程种植技术指导，专家团队解决种植难题</p>
                 </div>
                 
-                <div class="feature">
+                <div class="feature fade-in delay-3">
                     <i class="fas fa-hand-holding-usd"></i>
                     <h3>回购保障</h3>
                     <p>签订回收协议，解决销售后顾之忧</p>
@@ -617,8 +782,8 @@
                     <h3>获取更多信息</h3>
                     <div class="contact-details">
                         <p><i class="fas fa-map-marker-alt"></i> 地址：山东省临沂市临沭县石门镇中心小学对过2号</p>
-                        <p><i class="fas fa-phone"></i> 电话：公司电话*******</p>
-                        <p><i class="fas fa-envelope"></i> 邮箱：公司邮箱*******</p>
+                        <p><i class="fas fa-phone"></i> 电话：0539-6213888 / 13853971234</p>
+                        <p><i class="fas fa-envelope"></i> 邮箱：ysseed@shandongseed.com</p>
                         <p><i class="fas fa-clock"></i> 工作时间：周一至周六 8:00-18:00</p>
                     </div>
                     <div class="social-links">
@@ -630,7 +795,7 @@
                 </div>
                 
                 <div class="contact-form">
-                    <form>
+                    <form id="contactForm">
                         <div class="form-group">
                             <input type="text" placeholder="您的姓名" required>
                         </div>
@@ -690,8 +855,8 @@
                     <h3>联系我们</h3>
                     <ul>
                         <li><i class="fas fa-map-marker-alt"></i> 山东省临沂市临沭县石门镇中心小学对过2号</li>
-                        <li><i class="fas fa-phone"></i> 公司电话******</li>
-                        <li><i class="fas fa-envelope"></i> 公司邮箱*****</li>
+                        <li><i class="fas fa-phone"></i> 0539-6213888</li>
+                        <li><i class="fas fa-envelope"></i> ysseed@shandongseed.com</li>
                     </ul>
                 </div>
             </div>
@@ -702,24 +867,126 @@
         </div>
     </footer>
 
+    <!-- 图片模态框 -->
+    <div id="imageModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImg">
+        <div id="caption" class="modal-caption"></div>
+    </div>
+
     <script>
+        // 修复导航平滑滚动
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop,
+                        behavior: 'smooth'
+                    });
+                    
+                    // 移动端点击后关闭菜单
+                    document.getElementById('mainNav').classList.remove('active');
+                }
             });
         });
         
-        const form = document.querySelector('.contact-form form');
-        if(form) {
-            form.addEventListener('submit', function(e) {
+        // 表单提交处理
+        const contactForm = document.getElementById('contactForm');
+        if(contactForm) {
+            contactForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 alert('感谢您的咨询！我们会尽快与您联系。');
-                form.reset();
+                contactForm.reset();
             });
         }
+        
+        // 移动端菜单切换
+        const mobileToggle = document.getElementById('mobileToggle');
+        const mainNav = document.getElementById('mainNav');
+        
+        if (mobileToggle && mainNav) {
+            mobileToggle.addEventListener('click', function() {
+                mainNav.classList.toggle('active');
+            });
+        }
+        
+        // 添加滚动动画效果
+        function animateOnScroll() {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach(el => {
+                const position = el.getBoundingClientRect();
+                if (position.top < window.innerHeight - 50) {
+                    el.style.opacity = 1;
+                    el.style.transform = 'translateY(0)';
+                }
+            });
+        }
+        
+        // 初始化滚动动画
+        window.addEventListener('scroll', animateOnScroll);
+        window.addEventListener('load', animateOnScroll);
+        
+        // 图片模态框功能
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImg');
+        const captionText = document.getElementById('caption');
+        
+        function openModal(imgSrc, caption) {
+            modal.style.display = 'block';
+            modalImg.src = imgSrc;
+            captionText.innerHTML = caption;
+            document.body.style.overflow = 'hidden'; // 防止背景滚动
+        }
+        
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // 恢复背景滚动
+        }
+        
+        // 点击模态框外部关闭
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // 按ESC键关闭模态框
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && modal.style.display === 'block') {
+                closeModal();
+            }
+        });
+        
+        // 修复产品卡片高度
+        function fixProductHeights() {
+            const productCards = document.querySelectorAll('.product-card');
+            let maxHeight = 0;
+            
+            // 重置高度
+            productCards.forEach(card => {
+                card.style.height = 'auto';
+            });
+            
+            // 找到最高卡片的高度
+            productCards.forEach(card => {
+                if (card.offsetHeight > maxHeight) {
+                    maxHeight = card.offsetHeight;
+                }
+            });
+            
+            // 应用高度（仅在大屏幕上）
+            if (window.innerWidth > 768) {
+                productCards.forEach(card => {
+                    card.style.height = maxHeight + 'px';
+                });
+            }
+        }
+        
+        // 初始化高度调整
+        window.addEventListener('load', fixProductHeights);
+        window.addEventListener('resize', fixProductHeights);
     </script>
 </body>
 </html>
